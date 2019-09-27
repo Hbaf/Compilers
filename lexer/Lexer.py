@@ -9,8 +9,8 @@ class Lexer:
 
     def __init__(self, text):
         self.text = text
-        self.line_num = 0
-        self.line_pos = 0
+        self.line_num = 1
+        self.line_pos = 1
         self.text_pos = 0
         self.char = self.text[0]
         self.state = Part.NOT_STARTED
@@ -24,7 +24,7 @@ class Lexer:
 
         while True:
             if self.char == '\n':
-                self.analyze(self.buffer)
+                self.pre_analyze(self.buffer)
                 self.buffer = ''
             elif self.state == Part.VARIABLES_DEFINITION:
                 if self.char == '[':
@@ -37,7 +37,7 @@ class Lexer:
                 if self.char not in [' ', '{', EOF]:
                     self.buffer += self.char
                 else:
-                    self.analyze(self.buffer)
+                    self.pre_analyze(self.buffer)
                     self.buffer = ''
 
             elif self.state == Part.VAR:
@@ -55,7 +55,7 @@ class Lexer:
                 if self.char not in [' ', '{', EOF]:
                     self.buffer += self.char
                 else:
-                    self.analyze(self.buffer)
+                    self.pre_analyze(self.buffer)
                     self.buffer = ''
 
             elif self.state == Part.COMMENT:
@@ -63,7 +63,7 @@ class Lexer:
                     self.state = self.prev_state
 
             if self.char == EOF:
-                self.analyze(self.buffer)
+                self.pre_analyze(self.buffer)
                 break
 
             self.next_char()
@@ -78,34 +78,41 @@ class Lexer:
                 self.analyze(lexeme[0])
                 self.analyze(lexeme[1:])
             else:
-                self.line_pos -= (len(lexeme) - 1)
                 try:  # checking if token matches predefined TokenType patterns, if no - check other variants
                     self.result.append(Token(self.line_num, self.line_pos, TokenType(lexeme.lower()), lexeme))
+                    self.increase_line_pos(len(lexeme))
                 except ValueError:
                     if lexeme.isalpha():  # check if token is variable(named only with letters)
                         self.result.append(Token(self.line_num, self.line_pos, TokenType.VARIABLE, lexeme))
+                        self.increase_line_pos(len(lexeme))
                     elif lexeme.isdigit():  # check if token is number(contains only digits)
-                        self.result.append(Token(self.line_num, self.line_pos, TokenType.NUMBER, lexeme))
-                    elif len(lexeme) > 1 and lexeme[0] == '-' and lexeme[
-                                                                  1:].isdigit():  # check if token is a negative number(-number)
-                        self.line_pos += (len(lexeme) - 1)
-                        self.analyze('-')
-                        self.analyze(lexeme[1:])
-                        self.line_pos -= (len(lexeme) - 1)
+                        self.result.append(Token(self.line_num, self.line_pos, TokenType.NUMBER, hex(int(lexeme))))
+                        self.increase_line_pos(len(lexeme))
+                    elif len(lexeme) > 1 and lexeme[0] == '-' and lexeme[1:].isdigit():  # check if token is a negative number(-number)
+                        self.result.append(Token(self.line_num, self.line_pos, TokenType.OP_NEGATE, '-')) # analyze separtely minus
+                        self.increase_line_pos(len(lexeme[0]))
+                        self.analyze(lexeme[1:])                                                          #and number
                     else:
                         self.result.append(self.error(ErrorType.UNRECGN_TOKEN, lexeme))
-            self.line_pos += (len(lexeme) - 1)
+                        self.increase_line_pos(len(lexeme))
+
+    def pre_analyze(self, lexeme):
+        self.line_pos = self.line_pos - len(lexeme)
+        self.analyze(lexeme)
+
+    def increase_line_pos(self, len):
+        self.line_pos = self.line_pos + len
 
     def next_char(self):
+        if self.char == '\n':
+            self.line_num += 1
+            self.line_pos = 0
         self.line_pos += 1
         self.text_pos += 1
         if self.text_pos == len(self.text):
             self.char = EOF
         else:
             self.char = self.text[self.text_pos]
-            if self.char == '\n':
-                self.line_num += 1
-                self.line_pos = 0
 
     def error(self, type, value):
         return Error(self.line_num, self.line_pos,
