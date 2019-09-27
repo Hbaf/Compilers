@@ -1,0 +1,8 @@
+venv
+.idea
+*.log
+*.txt
+*.exe
+*.docx
+*.zip
+__pycache__
