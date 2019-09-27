@@ -1,0 +1,44 @@
+     0	     1	KEY_WORD_VAR        	Var
+     0	     6	VARIABLE            	age
+     0	     8	SEP_COMMA           	,
+     0	    14	VARIABLE            	money
+     0	    18	SEP_COMMA           	,
+     1	    -6	VARIABLE            	bottles
+     1	     0	SEP_SEMICOLON       	;
+     2	     0	SEP_LFT_SQR         	[
+     2	     6	VARIABLE            	temp
+     2	    11	Unrecognised token :	!=                                
+     3	    -4	VARIABLE            	price
+     3	     6	VARIABLE            	age
+     3	    10	OP_SET              	=
+     4	    -1	NUMBER              	15
+     4	     6	VARIABLE            	money
+     4	    12	OP_SET              	=
+     5	    -2	NUMBER              	100
+     5	     6	VARIABLE            	price
+     5	    12	OP_SET              	=
+     6	     0	NUMBER              	8
+     6	     6	VARIABLE            	temp
+     6	    11	OP_SET              	=
+     7	     0	OP_NEGATE           	-
+     7	     0	NUMBER              	8
+    10	     6	VARIABLE            	age
+    10	    10	OP_SET              	=
+    10	    12	VARIABLE            	age
+    10	    16	OP_ADD              	+
+    11	     0	NUMBER              	8
+    13	    -1	Unrecognised token :	__                                
+    15	    -2	Unrecognised token :	+**                               
+    16	     6	KEY_WORD_FOR        	For
+    16	    10	VARIABLE            	bottles
+    16	    18	OP_SET_CYCLE        	:=
+    16	    21	NUMBER              	0
+    16	    23	KEY_WORD_TO         	to
+    16	    26	NUMBER              	5
+    17	    -1	KEY_WORD_DO         	do
+    17	    10	VARIABLE            	money
+    17	    16	OP_SET              	=
+    17	    18	VARIABLE            	money
+    17	    24	OP_NEGATE           	-
+    18	    -4	VARIABLE            	price
+    19	     2	SEP_RGHT_SQR        	]

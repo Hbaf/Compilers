@@ -1,0 +1,20 @@
+Var age, money, bottles;
+[
+    temp != price
+    age = 15
+    money = 100
+    price = 8
+    temp = -8
+    { he needed an alcohol  }{
+        he faked his passport [ age = age + 3 would be enough]
+        and he is 23 ( > 18) y.o. now}
+    age = age + 8
+
+__
+
++**
+
+    For bottles := 0 to 5 do
+        money = money - price
+
+]

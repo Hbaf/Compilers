@@ -30,3 +30,4 @@ class ErrorType(Enum):
     UNRECGN_TOKEN = 'Unrecognised token'
     UNEXPCT_TOKEN = 'Unexpected token'
     NO_XPCT_TOKEN = 'Expected token not found'
+    UNDEFINED_VAR = 'Undefined variable'

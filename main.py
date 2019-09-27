@@ -1,6 +1,6 @@
 from lexer.Lexer import Lexer
 files = ['lang_example', 'lang_wrong_example']
-for i in files[1:]:
+for i in files:
     fr = open(i, 'r')
     text = fr.read()
     lexer = Lexer(text)

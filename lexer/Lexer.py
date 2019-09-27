@@ -4,8 +4,8 @@ from common.token_type import TokenType
 
 EOF = '\u0000'
 
-class Lexer:
 
+class Lexer:
 
     def __init__(self, text):
         self.text = text
@@ -17,7 +17,6 @@ class Lexer:
         self.prev_state = Part.NOT_STARTED
         self.buffer = ''
         self.result = []
-
 
     def parse(self):
         self.prev_state = Part.VARIABLES_DEFINITION
@@ -72,25 +71,29 @@ class Lexer:
 
     def analyze(self, lexeme):
         if len(lexeme) > 0:
-            if len(lexeme) > 1 and lexeme[-1] in ',;':
+            if len(lexeme) > 1 and lexeme[-1] in ',;)]':  # check if two tokens are not splitted
                 self.analyze(lexeme[:-1])
                 self.analyze(lexeme[-1])
+            elif len(lexeme) > 1 and lexeme[0] in '([':  # check if two tokens are not splitted
+                self.analyze(lexeme[0])
+                self.analyze(lexeme[1:])
             else:
                 self.line_pos -= (len(lexeme) - 1)
-                try:
+                try:  # checking if token matches predefined TokenType patterns, if no - check other variants
                     self.result.append(Token(self.line_num, self.line_pos, TokenType(lexeme.lower()), lexeme))
                 except ValueError:
-                    if lexeme.isalpha():
+                    if lexeme.isalpha():  # check if token is variable(named only with letters)
                         self.result.append(Token(self.line_num, self.line_pos, TokenType.VARIABLE, lexeme))
-                    elif lexeme.isdigit():
+                    elif lexeme.isdigit():  # check if token is number(contains only digits)
                         self.result.append(Token(self.line_num, self.line_pos, TokenType.NUMBER, lexeme))
-                    elif len(lexeme) > 1 and lexeme[0] == '-' and lexeme[1:].isdigit():
+                    elif len(lexeme) > 1 and lexeme[0] == '-' and lexeme[
+                                                                  1:].isdigit():  # check if token is a negative number(-number)
                         self.line_pos += (len(lexeme) - 1)
                         self.analyze('-')
                         self.analyze(lexeme[1:])
                         self.line_pos -= (len(lexeme) - 1)
                     else:
-                        self.error(ErrorType.UNRECGN_TOKEN, lexeme)
+                        self.result.append(self.error(ErrorType.UNRECGN_TOKEN, lexeme))
             self.line_pos += (len(lexeme) - 1)
 
     def next_char(self):
