@@ -14,57 +14,32 @@ class Lexer:
         self.text_pos = 0
         self.char = self.text[0]
         self.state = Part.NOT_STARTED
-        self.prev_state = Part.NOT_STARTED
         self.buffer = ''
         self.result = []
 
     def parse(self):
-        self.prev_state = Part.VARIABLES_DEFINITION
-        self.state = Part.VARIABLES_DEFINITION
 
         while True:
-            if self.char == '\n':
-                self.pre_analyze(self.buffer)
+            if self.char == ' ':
+                self.pre_analyze()
+
+            elif self.char == '\n':
+                self.pre_analyze()
+
+            elif self.char == '{':
+                self.pre_analyze()
                 self.buffer = ''
-            elif self.state == Part.VARIABLES_DEFINITION:
-                if self.char == '[':
-                    self.state = Part.CODE
-                elif self.char == '{':
-                    self.buffer = ''
-                    self.state = Part.COMMENT
-                    self.prev_state = Part.VARIABLES_DEFINITION
-
-                if self.char not in [' ', '{', EOF]:
-                    self.buffer += self.char
-                else:
-                    self.pre_analyze(self.buffer)
-                    self.buffer = ''
-
-            elif self.state == Part.VAR:
-                if self.char == ';':
-                    self.state = Part.VARIABLES_DEFINITION
-
-            elif self.state == Part.CODE:
-                if self.char == '{':
-                    self.buffer = ''
-                    self.state = Part.COMMENT
-                    self.prev_state = Part.CODE
-                elif self.char == ']':
-                    self.state = Part.FINISHED
-
-                if self.char not in [' ', '{', EOF]:
-                    self.buffer += self.char
-                else:
-                    self.pre_analyze(self.buffer)
-                    self.buffer = ''
+                self.state = Part.COMMENT
 
             elif self.state == Part.COMMENT:
                 if self.char == '}':
-                    self.state = self.prev_state
+                    self.state = Part.CODE
 
-            if self.char == EOF:
-                self.pre_analyze(self.buffer)
+            elif self.char == EOF:
+                self.pre_analyze()
                 break
+            else:
+                self.buffer += self.char
 
             self.next_char()
         return self.result
@@ -96,9 +71,10 @@ class Lexer:
                         self.result.append(self.error(ErrorType.UNRECGN_TOKEN, lexeme))
                         self.increase_line_pos(len(lexeme))
 
-    def pre_analyze(self, lexeme):
-        self.line_pos = self.line_pos - len(lexeme)
-        self.analyze(lexeme)
+    def pre_analyze(self):
+        self.line_pos = self.line_pos - len(self.buffer)
+        self.analyze(self.buffer)
+        self.buffer = ''
 
     def increase_line_pos(self, len):
         self.line_pos = self.line_pos + len
