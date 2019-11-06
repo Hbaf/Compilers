@@ -9,7 +9,7 @@ class Token:
         self.value = value
 
     def to_string(self):
-        res = '{:>6}\t{:>6}\t{:<20}'.format(str(self.line), str(self.pos), str(self.type.name))
+        res = '{:>6}\t{:>6}\t{:<15}'.format(str(self.line), str(self.pos), str(self.type.name))
         if self.value != '!':
             res += '\t' + str(self.value)
         return res
