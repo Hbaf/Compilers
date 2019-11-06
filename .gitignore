@@ -4,5 +4,6 @@ venv
 *.txt
 *.exe
 *.docx
+*.pdf
 *.zip
 __pycache__
